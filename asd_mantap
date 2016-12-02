@@ -1,0 +1,348 @@
+#ifndef PESAWAT_H_INCLUDED
+#define PESAWAT_H_INCLUDED
+#define nil NULL
+#define firstA(P) P->firstA
+#define next(P) P->next
+#define info(P) P->info
+#define next(P) P->next
+#define prev(P) P->prev
+#include <iostream>
+
+using namespace std;
+
+typedef struct elment_list_pesawat *adr;
+typedef struct element_list_pemesan *adr_anak;
+
+
+struct pesawat
+{
+    string nama_pesawat;
+    string tanggal;
+    string jam_berangkat;
+    int kapasitas;
+
+};
+
+struct pemesan
+{
+    string no_ktp;
+    string nama_pemesan;
+    string alamat_pemesan;
+    string no_hp;
+};
+
+typedef pesawat infotypepesawat;
+typedef pemesan infotypepemesan;
+
+struct elment_list_pesawat
+{
+    infotypepesawat info;
+    adr next;
+    adr prev;
+    adr_anak firstA;
+};
+
+struct listpesawat
+{
+    adr first;
+    adr last;
+};
+
+struct element_list_pemesan
+{
+    infotypepemesan info;
+    adr_anak next;
+    adr_anak firstA;
+    adr_anak last;
+
+};
+
+void CreateListP(listpesawat &L);
+adr alokasi(infotypepesawat datapesawat);
+adr_anak alokasiK(infotypepemesan datapemesan);
+void dealokasiP(adr Psw);
+void dealokasiK(adr_anak Pms);
+void insertFirstP(listpesawat &L, adr Psw);
+void insertAfterP(listpesawat &L, adr Psw, adr prec);
+void insertLastP(listpesawat &L, adr Psw);
+void insertFirstK(listpesawat &L,adr Psw, adr_anak Pms);
+void insertAfterK(listpesawat &L, adr_anak Pms, adr_anak prec);
+void insertLastK(listpesawat &L, adr Psw,adr_anak Pms);
+void edi(adr &Psw, string tgl, string jam);
+adr_anak deletefirstK(listpesawat &L);
+adr_anak deleteafterK(listpesawat &L, adr_anak prec);
+adr_anak deletelastK(listpesawat &L);
+adr findElmP(listpesawat L,string tgl, string jam);
+void findElm(listpesawat L, infotypepemesan datapemesan);
+void printInfo();
+void input_dataP(pesawat &L);
+void input_dataK(pemesan &L);
+void ALLprint(listpesawat L);
+void printPemesan(adr_anak &Pms);
+bool isfull(infotypepesawat datapesawat,adr Psw);
+bool isempty(adr Psw);
+
+
+#endif // PESAWAT_H_INCLUDED
+
+
+//PESAWAT.CPP
+
+#include "pesawat.h"
+
+void CreateListP(listpesawat &L)
+{
+    L.first = NULL;
+}
+adr alokasi(infotypepesawat datapesawat)
+{
+    adr P = new elment_list_pesawat;
+    P->info = datapesawat;
+    P->next = NULL;
+    P->prev = NULL;
+    P->firstA = NULL;
+
+    return P;
+}
+adr_anak alokasiK(infotypepemesan datapemesan)
+{
+    adr_anak P = new element_list_pemesan;
+    P->info = datapemesan;
+    P->next = NULL;
+    return P;
+}
+
+void dealokasiP(adr Psw)
+{
+    delete Psw;
+}
+void dealokasiK(adr_anak Pms)
+{
+    delete Pms;
+}
+void insertFirstP(listpesawat &L, adr Psw)
+{
+    if ((L.first == NULL) && (L.last == NULL))
+    {
+        L.first = Psw;
+        L.last = Psw;
+    }
+    else
+    {
+        Psw->next = L.first;
+        prev(L.first) = Psw;
+        L.first = Psw;
+    }
+}
+void insertAfterP(listpesawat &L, adr Psw, adr prec)
+{
+    Psw->next = prec->next;
+    prec->next = Psw;
+    Psw->prev = prec;
+    prev(Psw->next) = Psw;
+}
+void insertLastP(listpesawat &L, adr Psw)
+{
+    adr P= L.first;
+    if ((L.first == NULL) && (L.last == NULL))
+    {
+        L.first = Psw;
+        L.last = Psw;
+    }
+    else
+    {
+        next(L.last) = Psw;
+        Psw->prev = L.last;
+        L.last = P;
+    }
+}
+
+adr findElmP(listpesawat L,string tgl, string jam)
+{
+    adr P;
+    while (P != NULL)
+    {
+         if((P->info.tanggal == tgl) && (P->info.jam_berangkat == jam))
+        {
+            return P;
+        }
+        P=P->next;
+    }
+    return P;
+}
+
+void insertFirstK(listpesawat &L,adr Psw, adr_anak Pms)
+{
+
+    if (Psw->firstA == NULL)
+    {
+        Psw->firstA = Pms;
+    }
+    else
+    {
+
+        Pms->next=Psw->firstA;
+        Psw->firstA= Pms;
+    }
+}
+void insertAfterK(listpesawat &L, adr_anak Pms, adr_anak prec)
+{
+    if (Pms->next == NULL)
+    {
+        Pms->next = prec->next;
+        prec->next = Pms;
+    }
+
+}
+void insertLastK(listpesawat &L, adr Psw,adr_anak Pms)
+{
+    if (Pms->next == NULL)
+    {
+        Pms->firstA = Pms;
+    }
+    else
+    {
+        Pms= Psw->firstA;
+        while (Pms->next != NULL)
+        {
+            Pms= Pms->next;
+        }
+        Pms->next=Pms;
+
+    }
+}
+
+void edi(adr &Psw, string tgl, string jam)
+{
+    cout<<"Masukkan Jam keberangkatan yang Baru : "<<endl;
+    cin>>jam;
+    cout<<"Masukkan Tanggal Keberangkatan yang Baru : "<<endl;
+    cin>>tgl;
+    Psw->info.jam_berangkat = jam;
+    Psw->info.tanggal = tgl;
+}
+
+adr_anak deletefirstK(listpesawat &L)
+{
+    adr_anak P = P->firstA;
+    if (P->next == P->firstA)
+    {
+        P->firstA = NULL;
+    }
+    else
+    {
+        P->firstA = P->next;
+        P->next = NULL;
+    }
+    return P;
+}
+adr_anak deleteafterK(listpesawat &L, adr_anak prec)
+{
+    adr_anak P = prec->next;
+    prec->next = P->next;
+    P->next = NULL;
+    return P;
+}
+adr_anak deletelastK(listpesawat &L)
+{
+    adr_anak P = P->firstA;
+    while (next(P->next) != NULL)
+    {
+        P = P->next;
+    }
+    adr_anak q = P;
+    P->next = NULL;
+    return q;
+}
+adr input_data()
+{
+    infotypepesawat pesawat;
+    cout<<"Masukkan Nama Pesawat      : ";
+    cin>>pesawat.nama_pesawat;
+
+    cout<<"Masukkan Tanggal   : ";
+    cin>>pesawat.tanggal;
+
+    cout<<"Jam Berangkat         : ";
+    cin>>pesawat.jam_berangkat;
+
+    cout<<"Kapasitas yang Tersedia adalah : ";
+    cin>>pesawat.kapasitas;
+    cout<<endl;
+}
+
+adr input_dataK()
+{
+    infotypepemesan pemesan;
+    cout<<"Masukkan Nama Anda      : ";
+    cin>>pemesan.nama_pemesan;
+
+    cout<<"Masukkan Nomor Identitas Anda   : ";
+    cin>>pemesan.no_ktp;
+
+    cout<<"Jam Keberangkatan Anda adalah         : ";
+    cin>>pemesan.alamat_pemesan;
+
+    cout<<"Masukkan Nomor Hp Anda : ";
+    cin>>pemesan.no_hp;
+    cout<<endl;
+}
+
+void ALLprint(listpesawat L){
+    adr Psw;
+    Psw = L.first;
+    while (Psw != NULL){
+        cout<<":::::::::::::::::::::::::::::::::::::::::::"<<endl;
+        cout<<"||Nama Pesawat           : "<<Psw->info.nama_pesawat<<endl;
+        cout<<"||Tanggal Keberangkatan  : "<<Psw->info.tanggal<<endl;
+        cout<<"||Jam Keberangkatan      : "<<Psw->info.jam_berangkat<<endl;
+        cout<<"||Kapasitas Pesawat      : "<<Psw->info.kapasitas<<endl;
+        cout<<"::::::::::::::::::::::::::::::::::::::::::::"<<endl;
+        cout<<endl;
+    }
+}
+
+void printPemesan(adr_anak &Pms){
+    int i=0;
+    adr_anak Psw = Pms->firstA;
+    if (isempty(Pms))
+    {
+        cout<<"Kursi masih kosong";
+    }
+    else
+    {
+        do
+        {
+            cout<<" Pemesan "<<i+1<<endl;
+            cout<<"======================================"<<endl;
+            cout<<" Id Pemesan      : "<<Pms->info.no_ktp<<endl;
+            cout<<" Nama Pemesan    : "<<Pms->info.nama_pemesan<<endl;
+            cout<<" Alamat Pemesan  : "<<Pms->info.alamat_pemesan<<endl;
+            cout<<" No HP           : "<<Pms->info.no_hp<<endl;
+            cout<<"======================================"<<endl;
+            cout<<endl;
+            i++;
+            Pms = Pms->next;
+        }
+        while (Pms != Psw->first);
+
+    }
+
+}
+
+bool isfull(infotypepesawat datapesawat,adr Psw){
+    int x ;
+    if(Psw->info.kapasitas == x)
+        return true;
+    else
+        return false;
+}
+
+bool isempty(adr Psw){
+    if(Psw == NULL)
+        return true;
+    else
+        return false;
+}
+
+
